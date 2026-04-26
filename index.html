@@ -5,23 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MalariaDetect — HOG+SVM</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
-      --bg:        #0a0e17;
-      --surface:   #111827;
-      --border:    #1e2d40;
-      --accent:    #00d4aa;
-      --accent2:   #ff4d6d;
-      --accent3:   #fbbf24;
-      --text:      #e2e8f0;
-      --muted:     #64748b;
-      --safe:      #10b981;
-      --danger:    #ef4444;
-      --mono:      'Space Mono', monospace;
-      --sans:      'DM Sans', sans-serif;
-      --radius:    12px;
+      --bg: #0a0e17;
+      --surface: #111827;
+      --border: #1e2d40;
+      --accent: #00d4aa;
+      --accent2: #ff4d6d;
+      --accent3: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --safe: #10b981;
+      --danger: #ef4444;
+      --mono: 'Space Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+      --radius: 12px;
     }
 
     body {
@@ -32,7 +37,6 @@
       overflow-x: hidden;
     }
 
-    /* ── Background grid ── */
     body::before {
       content: '';
       position: fixed;
@@ -45,22 +49,27 @@
       z-index: 0;
     }
 
-    /* ── Header ── */
     header {
-      position: relative;
-      z-index: 10;
-      padding: 28px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 18px 40px;
       display: flex;
       align-items: center;
       gap: 14px;
       border-bottom: 1px solid var(--border);
+      background: rgba(10, 14, 23, 0.92);
+      backdrop-filter: blur(12px);
     }
 
     .logo {
-      width: 42px; height: 42px;
+      width: 42px;
+      height: 42px;
       background: linear-gradient(135deg, var(--accent), #0099ff);
       border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 22px;
     }
 
@@ -71,30 +80,50 @@
       letter-spacing: 1px;
     }
 
-    .brand p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .brand p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
     .status-dot {
       margin-left: auto;
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12px; color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
       font-family: var(--mono);
     }
 
     .dot {
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--muted);
-      animation: none;
     }
-    .dot.online { background: var(--safe); animation: pulse 2s infinite; }
-    .dot.error  { background: var(--danger); }
+
+    .dot.online {
+      background: var(--safe);
+      animation: pulse 2s infinite;
+    }
+
+    .dot.error {
+      background: var(--danger);
+    }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,.4); }
-      50%       { opacity: .7; box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+      0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(16,185,129,.4);
+      }
+
+      50% {
+        opacity: .7;
+        box-shadow: 0 0 0 6px rgba(16,185,129,0);
+      }
     }
 
-    /* ── Main layout ── */
     main {
       position: relative;
       z-index: 10;
@@ -127,8 +156,11 @@
     }
 
     .tags {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 8px; margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
     }
 
     .tag {
@@ -141,7 +173,6 @@
       border-radius: 100px;
     }
 
-    /* ── Upload zone ── */
     .upload-zone {
       border: 2px dashed var(--border);
       border-radius: var(--radius);
@@ -156,7 +187,8 @@
 
     .upload-zone::before {
       content: '';
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background: radial-gradient(ellipse at center, rgba(0,212,170,.04) 0%, transparent 70%);
       opacity: 0;
       transition: opacity .3s;
@@ -169,7 +201,9 @@
     }
 
     .upload-zone:hover::before,
-    .upload-zone.drag-over::before { opacity: 1; }
+    .upload-zone.drag-over::before {
+      opacity: 1;
+    }
 
     .upload-icon {
       font-size: 48px;
@@ -178,14 +212,25 @@
       transition: transform .3s;
     }
 
-    .upload-zone:hover .upload-icon { transform: scale(1.1) translateY(-4px); }
+    .upload-zone:hover .upload-icon {
+      transform: scale(1.1) translateY(-4px);
+    }
 
-    .upload-zone h3 { font-size: 17px; font-weight: 500; }
-    .upload-zone p  { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .upload-zone h3 {
+      font-size: 17px;
+      font-weight: 500;
+    }
 
-    #file-input { display: none; }
+    .upload-zone p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
 
-    /* ── Preview ── */
+    #file-input {
+      display: none;
+    }
+
     #preview-wrap {
       display: none;
       margin-top: 24px;
@@ -198,20 +243,35 @@
     }
 
     #preview-img {
-      width: 140px; height: 140px;
+      width: 140px;
+      height: 140px;
       object-fit: cover;
       border-radius: 8px;
       border: 2px solid var(--border);
       flex-shrink: 0;
     }
 
-    .preview-info { flex: 1; }
-    .preview-info h4 { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
-    .preview-info p  { font-family: var(--mono); font-size: 13px; color: var(--text); }
+    .preview-info {
+      flex: 1;
+    }
 
-    /* ── Boutons ── */
+    .preview-info h4 {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .preview-info p {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+    }
+
     .btn-row {
-      display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -237,7 +297,10 @@
       box-shadow: 0 8px 24px rgba(0,212,170,.3);
     }
 
-    #analyze-btn:disabled { opacity: .5; cursor: not-allowed; }
+    #analyze-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
 
     #reset-btn {
       background: transparent;
@@ -245,9 +308,11 @@
       color: var(--muted);
     }
 
-    #reset-btn:hover { border-color: var(--muted); color: var(--text); }
+    #reset-btn:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
 
-    /* ── Loader ── */
     .loader {
       display: none;
       align-items: center;
@@ -263,16 +328,20 @@
     }
 
     .spinner {
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       border: 2px solid rgba(0,212,170,.2);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin .7s linear infinite;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-    /* ── Result card ── */
     #result-card {
       display: none;
       margin-top: 24px;
@@ -314,13 +383,28 @@
       border: 1px solid;
     }
 
-    .badge-safe   { color: var(--safe);   border-color: var(--safe);   background: rgba(16,185,129,.1); }
-    .badge-danger { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,.1); }
-    .badge-warn   { color: var(--accent3); border-color: var(--accent3); background: rgba(251,191,36,.1); }
+    .badge-safe {
+      color: var(--safe);
+      border-color: var(--safe);
+      background: rgba(16,185,129,.1);
+    }
 
-    .result-body { padding: 0 24px 24px; }
+    .badge-danger {
+      color: var(--danger);
+      border-color: var(--danger);
+      background: rgba(239,68,68,.1);
+    }
 
-    /* Confidence bar */
+    .badge-warn {
+      color: var(--accent3);
+      border-color: var(--accent3);
+      background: rgba(251,191,36,.1);
+    }
+
+    .result-body {
+      padding: 0 24px 24px;
+    }
+
     .conf-row {
       display: flex;
       justify-content: space-between;
@@ -328,8 +412,17 @@
       margin-bottom: 8px;
     }
 
-    .conf-label { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-    .conf-value { font-size: 14px; font-weight: 600; font-family: var(--mono); }
+    .conf-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .conf-value {
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--mono);
+    }
 
     .bar-track {
       width: 100%;
@@ -347,7 +440,6 @@
       width: 0%;
     }
 
-    /* Prob comparison */
     .prob-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -362,11 +454,23 @@
       padding: 14px;
     }
 
-    .prob-card .p-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-family: var(--mono); }
-    .prob-card .p-val   { font-size: 20px; font-weight: 700; font-family: var(--mono); }
-    .prob-card.highlight { border-color: currentColor; }
+    .prob-card .p-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: var(--mono);
+    }
 
-    /* Details table */
+    .prob-card .p-val {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    .prob-card.highlight {
+      border-color: currentColor;
+    }
+
     .details {
       margin-top: 18px;
       border: 1px solid var(--border);
@@ -381,11 +485,20 @@
       font-size: 13px;
     }
 
-    .details-row:last-child { border-bottom: none; }
-    .details-row .dk { color: var(--muted); flex: 1; }
-    .details-row .dv { font-family: var(--mono); font-size: 12px; }
+    .details-row:last-child {
+      border-bottom: none;
+    }
 
-    /* ── Error ── */
+    .details-row .dk {
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .details-row .dv {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
     #error-box {
       display: none;
       margin-top: 24px;
@@ -398,58 +511,56 @@
       font-family: var(--mono);
     }
 
-    /* ── Info strip ── */
-    .info-strip {
-      margin-top: 50px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .info-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
-
-    .info-card .ic-icon { font-size: 24px; margin-bottom: 10px; }
-    .info-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .info-card p  { font-size: 12px; color: var(--muted); line-height: 1.6; }
-
     @media (max-width: 640px) {
-      header { padding: 18px 16px; }
-      main   { padding: 28px 16px; }
-      .info-strip { grid-template-columns: 1fr; }
-      #preview-wrap { flex-direction: column; }
-      #preview-img  { width: 100%; height: 180px; }
-      .prob-grid { grid-template-columns: 1fr; }
+      header {
+        padding: 16px;
+      }
+
+      main {
+        padding: 28px 16px;
+      }
+
+      #preview-wrap {
+        flex-direction: column;
+      }
+
+      #preview-img {
+        width: 100%;
+        height: 180px;
+      }
+
+      .prob-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ── Header ──────────────────────────────────────────────── -->
 <header>
   <div class="logo">🦟</div>
+
   <div class="brand">
     <h1>MalariaDetect</h1>
     <p>HOG + SVM · Diagnostic cellulaire</p>
   </div>
+
   <div class="status-dot">
     <div class="dot" id="api-dot"></div>
     <span id="api-status">Connexion…</span>
   </div>
 </header>
 
-<!-- ── Main ────────────────────────────────────────────────── -->
 <main>
 
-  <!-- Hero -->
   <div class="hero">
     <h2>Détection de <span>Malaria</span><br>par analyse d'image cellulaire</h2>
-    <p>Chargez une image de cellule sanguine.<br>
-       Le modèle HOG+SVM analyse les features et prédit en millisecondes.</p>
+    <p>
+      Chargez une image de cellule sanguine.<br>
+      Le modèle HOG+SVM analyse les features et prédit en millisecondes.
+    </p>
+
     <div class="tags">
       <span class="tag">HOG Features</span>
       <span class="tag">SVM + Calibration</span>
@@ -459,7 +570,6 @@
     </div>
   </div>
 
-  <!-- Upload -->
   <div class="upload-zone" id="upload-zone">
     <span class="upload-icon">🔬</span>
     <h3>Déposez une image de cellule</h3>
@@ -467,9 +577,9 @@
     <input type="file" id="file-input" accept="image/*" />
   </div>
 
-  <!-- Preview -->
-  <div id="preview-wrap" style="display:flex;">
+  <div id="preview-wrap">
     <img id="preview-img" src="" alt="Aperçu" />
+
     <div class="preview-info">
       <h4>IMAGE SÉLECTIONNÉE</h4>
       <p id="preview-name">—</p>
@@ -477,68 +587,68 @@
     </div>
   </div>
 
-  <!-- Boutons -->
   <div class="btn-row" id="btn-row" style="display:none;">
     <button id="analyze-btn">⚡ Analyser l'image</button>
     <button id="reset-btn">↺ Réinitialiser</button>
   </div>
 
-  <!-- Loader -->
   <div class="loader" id="loader">
     <div class="spinner"></div>
     <span>Extraction HOG · Inférence SVM…</span>
   </div>
 
-  <!-- Error -->
   <div id="error-box"></div>
 
-  <!-- Result -->
   <div id="result-card">
     <div class="result-header" id="result-header">
       <div class="result-icon" id="res-icon"></div>
+
       <div class="result-label">
         <h3 id="res-label"></h3>
         <p class="subtitle" id="res-subtitle"></p>
       </div>
+
       <span class="result-badge" id="res-badge"></span>
     </div>
 
     <div class="result-body">
-      <!-- Confidence bar -->
       <div class="conf-row">
         <span class="conf-label">CONFIANCE DU MODÈLE</span>
         <span class="conf-value" id="conf-pct">—</span>
       </div>
+
       <div class="bar-track">
         <div class="bar-fill" id="bar-fill"></div>
       </div>
 
-      <!-- Probabilités -->
       <div class="prob-grid">
         <div class="prob-card" id="prob-uninfected">
           <div class="p-label">UNINFECTED</div>
           <div class="p-val" id="p-uninfected">—</div>
         </div>
+
         <div class="prob-card" id="prob-parasitized">
           <div class="p-label">PARASITIZED</div>
           <div class="p-val" id="p-parasitized">—</div>
         </div>
       </div>
 
-      <!-- Détails -->
       <div class="details">
         <div class="details-row">
           <span class="dk">Fichier</span>
           <span class="dv" id="d-file">—</span>
         </div>
+
         <div class="details-row">
           <span class="dk">Taille originale</span>
           <span class="dv" id="d-size">—</span>
         </div>
+
         <div class="details-row">
           <span class="dk">Taille traitée</span>
           <span class="dv" id="d-proc">—</span>
         </div>
+
         <div class="details-row">
           <span class="dk">Niveau de risque</span>
           <span class="dv" id="d-risk">—</span>
@@ -546,34 +656,36 @@
       </div>
     </div>
   </div>
+
 </main>
 
 <script>
-  // ─── State ────────────────────────────────────────────────────────────────
   const API = 'http://localhost:5000';
   let selectedFile = null;
 
-  // ─── DOM refs ─────────────────────────────────────────────────────────────
-  const zone        = document.getElementById('upload-zone');
-  const fileInput   = document.getElementById('file-input');
+  const zone = document.getElementById('upload-zone');
+  const fileInput = document.getElementById('file-input');
   const previewWrap = document.getElementById('preview-wrap');
-  const previewImg  = document.getElementById('preview-img');
+  const previewImg = document.getElementById('preview-img');
   const previewName = document.getElementById('preview-name');
   const previewSize = document.getElementById('preview-size');
-  const btnRow      = document.getElementById('btn-row');
-  const analyzeBtn  = document.getElementById('analyze-btn');
-  const resetBtn    = document.getElementById('reset-btn');
-  const loader      = document.getElementById('loader');
-  const errorBox    = document.getElementById('error-box');
-  const resultCard  = document.getElementById('result-card');
-  const apiDot      = document.getElementById('api-dot');
-  const apiStatus   = document.getElementById('api-status');
+  const btnRow = document.getElementById('btn-row');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const loader = document.getElementById('loader');
+  const errorBox = document.getElementById('error-box');
+  const resultCard = document.getElementById('result-card');
+  const apiDot = document.getElementById('api-dot');
+  const apiStatus = document.getElementById('api-status');
 
-  // ─── Health check ─────────────────────────────────────────────────────────
   async function checkHealth() {
     try {
-      const res = await fetch(`${API}/health`, { signal: AbortSignal.timeout(4000) });
+      const res = await fetch(`${API}/health`, {
+        signal: AbortSignal.timeout(4000)
+      });
+
       const data = await res.json();
+
       if (data.model_loaded) {
         apiDot.className = 'dot online';
         apiStatus.textContent = 'API connectée';
@@ -590,7 +702,6 @@
   checkHealth();
   setInterval(checkHealth, 15000);
 
-  // ─── Upload handlers ──────────────────────────────────────────────────────
   zone.addEventListener('click', () => fileInput.click());
 
   zone.addEventListener('dragover', e => {
@@ -598,51 +709,66 @@
     zone.classList.add('drag-over');
   });
 
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('dragleave', () => {
+    zone.classList.remove('drag-over');
+  });
 
   zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('image/')) handleFile(f);
+
+    const file = e.dataTransfer.files[0];
+
+    if (file && file.type.startsWith('image/')) {
+      handleFile(file);
+    }
   });
 
   fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    if (fileInput.files[0]) {
+      handleFile(fileInput.files[0]);
+    }
   });
 
   function handleFile(file) {
     selectedFile = file;
+
     const reader = new FileReader();
+
     reader.onload = e => {
       previewImg.src = e.target.result;
       previewName.textContent = file.name;
       previewSize.textContent = `${(file.size / 1024).toFixed(1)} KB · ${file.type}`;
+
       previewWrap.style.display = 'flex';
-      btnRow.style.display      = 'flex';
-      zone.style.display        = 'none';
+      btnRow.style.display = 'flex';
+      zone.style.display = 'none';
+
       hideResult();
     };
+
     reader.readAsDataURL(file);
   }
 
   resetBtn.addEventListener('click', () => {
     selectedFile = null;
     fileInput.value = '';
+
     previewWrap.style.display = 'none';
-    btnRow.style.display      = 'none';
-    zone.style.display        = 'block';
+    btnRow.style.display = 'none';
+    zone.style.display = 'block';
+
     hideResult();
   });
 
-  // ─── Predict ──────────────────────────────────────────────────────────────
   analyzeBtn.addEventListener('click', async () => {
     if (!selectedFile) return;
 
     hideResult();
-    loader.style.display      = 'flex';
-    analyzeBtn.disabled       = true;
-    analyzeBtn.textContent    = '⏳ Analyse…';
+
+    loader.style.display = 'flex';
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = '⏳ Analyse…';
 
     try {
       const formData = new FormData();
@@ -655,68 +781,85 @@
       });
 
       const data = await res.json();
+
       loader.style.display = 'none';
 
       if (!res.ok || data.error) {
-        showError(data.error || 'Erreur de l\'API.');
+        showError(data.error || 'Erreur de l API.');
       } else {
         showResult(data);
       }
 
-    } catch (err) {
+    } catch {
       loader.style.display = 'none';
-      showError(`Impossible de contacter l'API. Vérifiez que app.py est lancé.\n→ python app.py`);
+      showError("Impossible de contacter l'API. Vérifiez que app.py est lancé.\n→ python app.py");
     } finally {
-      analyzeBtn.disabled    = false;
-      analyzeBtn.textContent = '⚡ Analyser l\'image';
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "⚡ Analyser l'image";
     }
   });
 
-  // ─── Display helpers ──────────────────────────────────────────────────────
   function showResult(data) {
     const parasitized = data.prediction === 'Parasitized';
 
-    // Header
     document.getElementById('res-icon').textContent = parasitized ? '🦟' : '✅';
+
     document.getElementById('res-label').textContent = parasitized
       ? 'Cellule Parasitée'
       : 'Cellule Saine';
+
     document.getElementById('res-subtitle').textContent =
       `Confiance : ${data.confidence}% · Risque : ${data.risk_level}`;
 
     const badge = document.getElementById('res-badge');
+
     badge.textContent = data.risk_level;
+
     badge.className = 'result-badge ' +
-      (data.risk_level === 'Faible' ? 'badge-safe'
-       : data.risk_level === 'Modéré' ? 'badge-warn'
-       : 'badge-danger');
+      (data.risk_level === 'Faible'
+        ? 'badge-safe'
+        : data.risk_level === 'Modéré'
+          ? 'badge-warn'
+          : 'badge-danger');
 
     const header = document.getElementById('result-header');
-    header.style.borderBottom = `3px solid ${parasitized ? 'var(--danger)' : 'var(--safe)'}`;
 
-    // Bar
+    header.style.borderBottom = `3px solid ${
+      parasitized ? 'var(--danger)' : 'var(--safe)'
+    }`;
+
     document.getElementById('conf-pct').textContent = `${data.confidence}%`;
+
     const fill = document.getElementById('bar-fill');
+
     fill.style.background = parasitized
       ? 'linear-gradient(90deg, var(--danger), var(--accent2))'
       : 'linear-gradient(90deg, var(--safe), var(--accent))';
-    setTimeout(() => { fill.style.width = `${data.confidence}%`; }, 50);
 
-    // Probabilities
-    document.getElementById('p-uninfected').textContent   = `${data.probabilities.Uninfected}%`;
-    document.getElementById('p-parasitized').textContent  = `${data.probabilities.Parasitized}%`;
+    setTimeout(() => {
+      fill.style.width = `${data.confidence}%`;
+    }, 50);
+
+    document.getElementById('p-uninfected').textContent =
+      `${data.probabilities.Uninfected}%`;
+
+    document.getElementById('p-parasitized').textContent =
+      `${data.probabilities.Parasitized}%`;
 
     const cardU = document.getElementById('prob-uninfected');
     const cardP = document.getElementById('prob-parasitized');
-    cardU.style.color = !parasitized ? 'var(--safe)'   : 'var(--muted)';
-    cardP.style.color =  parasitized ? 'var(--danger)' : 'var(--muted)';
-    cardU.classList.toggle('highlight', !parasitized);
-    cardP.classList.toggle('highlight',  parasitized);
 
-    // Details
+    cardU.style.color = !parasitized ? 'var(--safe)' : 'var(--muted)';
+    cardP.style.color = parasitized ? 'var(--danger)' : 'var(--muted)';
+
+    cardU.classList.toggle('highlight', !parasitized);
+    cardP.classList.toggle('highlight', parasitized);
+
     const info = data.image_info;
+
     document.getElementById('d-file').textContent = info.filename;
-    document.getElementById('d-size').textContent = `${(info.size_bytes / 1024).toFixed(1)} KB`;
+    document.getElementById('d-size').textContent =
+      `${(info.size_bytes / 1024).toFixed(1)} KB`;
     document.getElementById('d-proc').textContent = info.processed_size;
     document.getElementById('d-risk').textContent = data.risk_level;
 
@@ -724,16 +867,17 @@
   }
 
   function showError(msg) {
-    errorBox.style.display  = 'block';
-    errorBox.textContent    = '⚠ ' + msg;
+    errorBox.style.display = 'block';
+    errorBox.textContent = '⚠ ' + msg;
   }
 
   function hideResult() {
     resultCard.style.display = 'none';
-    errorBox.style.display   = 'none';
-    loader.style.display     = 'none';
+    errorBox.style.display = 'none';
+    loader.style.display = 'none';
     document.getElementById('bar-fill').style.width = '0%';
   }
 </script>
+
 </body>
 </html>
