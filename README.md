@@ -71,7 +71,17 @@ The goal is to compare both approaches based on:
 - Performance on real-world data  
 
 ---
+## ⚖️ Performance Comparison
 
+| Metric        | HOG + SVM | YOLOv8 |
+|--------------|----------|--------|
+| Accuracy      | ~82%     | **96.37%** |
+| AUC           | ~0.90    | **0.9939** |
+| Feature Type  | Manual   | Learned |
+| Speed         | Fast     | Fast |
+| Complexity    | Low      | Medium |
+
+---
 ## 🧠 Learning Outcomes
 
 - Image preprocessing using OpenCV  
